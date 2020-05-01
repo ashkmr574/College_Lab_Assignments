@@ -1,0 +1,7 @@
+For the given assignment the assumptions are:
+1. There are three entities named 'Doctor', 'patient' and 'Test'.
+2.The Doctor has three attributes 'D id' , 'D name' and 'D specification'. Here 'D id' is the primary key.
+3.pateint entity has four attributes ie; 'PName', 'Page', 'PAddress', and 'PProblem'. here 'PName' is the primary key.
+4.The entity Test has three attributes 'TCode', TName, and TFee. Where 'TCode' is the primary key.
+5.the entity patient is linked with the entity Doctor with a 1:n relationship ie Diagnosis.
+6. the test and the patient is linked asw the relationship undergoes which is a 1:n relationship as 1 patient can undergo with many tests.

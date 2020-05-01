@@ -1,0 +1,406 @@
+// car insurance- company
+// Schema:
+   person(person_id,name,address)
+   car(license_no,model)
+   owns(person_id,license_no)
+   accident(report_no,date,location)
+   involved_in(damage_amount,report_no,license_no) //
+ 
+ // table creation
+ 
+ SQL> create table person( person_id varchar2(10) primary key,
+  2  name varchar2(25) not null,
+  3  address varchar2(30));
+
+Table created.
+
+SQL> create table car( license_no varchar2(10) primary key,
+  2  model varchar2(20) not null );
+
+Table created.
+
+SQL> create table owns
+  2  ( person_id varchar2(10) references person(person_id),
+  3  license_no varchar2(10) references car(license_no));
+
+Table created.
+
+SQL> create table accident
+  2  ( report_no varchar2(10) primary key,
+  3  a_date date,
+  4  location varchar2(20) not null);
+
+Table created.
+
+SQL> create table involved_in
+  2  ( report_no varchar2(10) references accident(report_no),
+  3  license_no varchar2(10) references car(license_no),
+  4  damage_amount number(10,2));
+
+Table created.
+
+// data insertion
+
+SQL> insert into person values('101','ABC','Kolkata');
+
+1 row created.
+
+SQL> insert into person values('102','DEF','Mumbai');
+
+1 row created.
+
+SQL> insert into person values('103','GHI','Kolkata');
+
+1 row created.
+
+SQL> insert into person values('104','PQR','Delhi');
+
+1 row created.
+
+SQL> insert into person values('114','XYZ','Chennai');
+
+1 row created.
+
+SQL> select * from person;
+
+PERSON_ID  NAME                      ADDRESS
+---------- ------------------------- ------------------------------
+101        ABC                       Kolkata
+102        DEF                       Mumbai
+103        GHI                       Kolkata
+104        PQR                       Delhi
+114        XYZ                       Chennai
+
+SQL>
+SQL> insert into car values('AIBPC2010','AT13');
+
+1 row created.
+
+SQL> insert into car values('AIBPC2011','AT14');
+
+1 row created.
+
+SQL> insert into car values('AIBPC2013','AT17');
+
+1 row created.
+
+SQL> insert into car values('AIBPC2016','AT18');
+
+1 row created.
+
+SQL> insert into car values('AIBPC2009','AT21');
+
+1 row created.
+SQL> select * from car;
+
+LICENSE_NO MODEL
+---------- --------------------
+AIBPC2010  AT13
+AIBPC2011  AT14
+AIBPC2013  AT17
+AIBPC2016  AT18
+AIBPC2009  AT21
+
+SQL> insert into owns values('102','AIBPC2010');
+
+1 row created.
+
+SQL> insert into owns values('101','AIBPC2011');
+
+1 row created.
+
+SQL> insert into owns values('103','AIBPC2016');
+
+1 row created.
+
+SQL> insert into owns values('103','AIBPC2009');
+
+1 row created.
+
+SQL> insert into owns values('114','AIBPC2013');
+
+1 row created.
+
+SQL>
+SQL> select * from owns;
+
+PERSON_ID  LICENSE_NO
+---------- ----------
+102        AIBPC2010
+101        AIBPC2011
+103        AIBPC2016
+103        AIBPC2009
+114        AIBPC2013
+
+SQL>
+SQL> insert into accident values('FIR270','17-APR-89','kolkata');
+
+1 row created.
+
+SQL> insert into accident values('FIR271','17-APR-91','kolkata');
+
+1 row created.
+
+SQL> insert into accident values('FIR279','31-DEC-89','Latehar');
+
+1 row created.
+
+SQL> insert into accident values('FIR713','1-JAN-89','Ranchi');
+
+1 row created.
+
+SQL> insert into accident values('FIR712','1-JAN-90','Ranchi');
+
+1 row created.
+
+SQL> insert into accident values('FIR103','1-JAN-16','Mumbai');
+
+1 row created.
+
+SQL> insert into accident values('FIR730','1-JAN-10','Mumbai');
+
+1 row created.
+
+SQL> insert into accident values('FIR731','5-JAN-10','Mumbai');
+
+1 row created.
+
+SQL> insert into accident values('FIR890','15-APR-10','Mumbai');
+
+1 row created.
+
+SQL> insert into involved_in values('FIR271','AIBPC2010',3000);
+
+1 row created.
+
+SQL> insert into involved_in values('FIR730','AIBPC2011',4000);
+
+1 row created.
+
+SQL> insert into involved_in values('FIR890','AIBPC2011',7000);
+
+1 row created.
+
+SQL> insert into involved_in values('FIR731','AIBPC2016',1500);
+
+1 row created.
+
+SQL> insert into involved_in values('FIR270','AIBPC2010',1500);
+
+1 row created.
+
+SQL>
+
+SQL> select * from involved_in;
+
+REPORT_NO  LICENSE_NO DAMAGE_AMOUNT
+---------- ---------- -------------
+FIR271     AIBPC2010           3000
+FIR730     AIBPC2011           4000
+FIR890     AIBPC2011           7000
+FIR731     AIBPC2016           1500
+FIR270     AIBPC2010           1500
+
+SQL>
+
+
+// QUERY
+1) Find the total number of people who owned cars that were involved in accidents in 2010.
+
+SQL> select count(distinct person_id) as total_count 
+from accident,owns,involved_in 
+where accident.report_no=involved_in.report_no 
+and involved_in.license_no=owns.license_no 
+and accident.a_date >= '1-JAN-10' and accident.a_date <= '31-DEC-10';
+
+TOTAL_COUNT
+-----------
+          2
+2) Find the number of accidents in which cars belonging to 'XYZ' were involved.
+
+
+SQL> select count(distinct name) as t_count
+  2  from person,involved_in,owns
+  3  where involved_in.license_no=owns.license_no
+  4  and owns.person_id=person.person_id
+  5  and person.name='XYZ';
+
+T_COUNT
+-------------------
+                  0
+SQL> insert into accident values('FIR107','20-MAR-16','Kolkata');
+
+1 row created.
+
+SQL> insert into involved_in values('FIR107','AIBPC2013','6500.50');
+
+1 row created.
+
+SQL> select count(distinct name) as t_count
+  2  from person,involved_in,owns
+  3  where involved_in.license_no=owns.license_no
+  4  and owns.person_id=person.person_id
+  5  and person.name='XYZ';
+
+T_COUNT
+-------------------
+                  1
+
+SQL>
+
+3) Add a new Accident to the database; assume any value for required attributes.
+
+
+SQL> insert into accident values('FIR171','12-MAR-15','DELHI');
+
+1 row created.
+
+SQL> insert into involved_in select report_no,'AIBPC2013',5000
+  2  from accident where report_no='FIR171';
+
+1 row created.
+
+SQL> select * from accident;
+
+REPORT_NO  A_DATE    LOCATION
+---------- --------- --------------------
+FIR270     17-APR-89 kolkata
+FIR271     17-APR-91 kolkata
+FIR279     31-DEC-89 Latehar
+FIR713     01-JAN-89 Ranchi
+FIR712     01-JAN-90 Ranchi
+FIR103     01-JAN-16 Mumbai
+FIR730     01-JAN-10 Mumbai
+FIR731     05-JAN-10 Mumbai
+FIR890     15-APR-10 Mumbai
+FIR107     20-MAR-16 Kolkata
+FIR171     12-MAR-15 DELHI
+
+11 rows selected.
+
+SQL> select* from involved_in;
+
+REPORT_NO  LICENSE_NO DAMAGE_AMOUNT
+---------- ---------- -------------
+FIR271     AIBPC2010           3000
+FIR730     AIBPC2011           4000
+FIR890     AIBPC2011           7000
+FIR731     AIBPC2016           1500
+FIR270     AIBPC2010           1500
+FIR107     AIBPC2013         6500.5
+FIR171     AIBPC2013           5000
+
+7 rows selected.
+
+SQL>
+
+4) delete model 'scorpio' belonging to 'ABC'.
+
+
+SQL> insert into car values('AIBPC1999','scorpio');
+
+1 row created.
+
+SQL> insert into owns select person_id,license_no
+  2  from person,car
+  3  where name='ABC'
+  4  and model='scorpio';
+
+1 row created.
+
+SQL> select * from owns;
+
+PERSON_ID  LICENSE_NO
+---------- ----------
+102        AIBPC2010
+101        AIBPC2011
+103        AIBPC2016
+103        AIBPC2009
+114        AIBPC2013
+101        AIBPC1999
+
+6 rows selected.
+
+SQL> insert into owns select person_id,license_no
+  2  from person,car
+  3  where name='XYZ'
+  4  and model='scorpio';
+
+1 row created.
+
+SQL> select * from owns;
+
+PERSON_ID  LICENSE_NO
+---------- ----------
+102        AIBPC2010
+101        AIBPC2011
+103        AIBPC2016
+103        AIBPC2009
+114        AIBPC2013
+101        AIBPC1999
+114        AIBPC1999
+
+7 rows selected.
+
+SQL> delete from owns where license_no = ( select license_no from
+  2  car where model='scorpio') and person_id=( select person_id from person
+  3  where name='ABC');
+
+1 row deleted.
+
+SQL> select * from owns;
+
+PERSON_ID  LICENSE_NO
+---------- ----------
+102        AIBPC2010
+101        AIBPC2011
+103        AIBPC2016
+103        AIBPC2009
+114        AIBPC2013
+114        AIBPC1999
+
+6 rows selected.
+
+SQL>
+ 
+ 5) Update the damage amount for the car with license number 'AIBPC2010' in the accident with report number 'FIR271' to Rs. 5000
+ 
+SQL> update involved_in
+  2  set damage_amount=5000
+  3  where report_no='FIR271'
+  4  and license-no='AIBPC2010';
+and license-no='AIBPC2010'
+            *
+ERROR at line 4:
+ORA-00904: "NO": invalid identifier
+
+
+SQL> update involved_in
+  2  set damage_amount=5000
+  3  where report_no='FIR271'
+  4  and license_no='AIBPC2010';
+
+1 row updated.
+
+SQL> select * from involved_in;
+
+REPORT_NO  LICENSE_NO DAMAGE_AMOUNT
+---------- ---------- -------------
+FIR271     AIBPC2010           5000
+FIR730     AIBPC2011           4000
+FIR890     AIBPC2011           7000
+FIR731     AIBPC2016           1500
+FIR270     AIBPC2010           1500
+FIR107     AIBPC2013         6500.5
+FIR171     AIBPC2013           5000
+
+7 rows selected.
+
+SQL>
+
+
+
+
+
+
+			

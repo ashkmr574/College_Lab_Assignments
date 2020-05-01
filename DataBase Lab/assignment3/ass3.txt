@@ -1,0 +1,157 @@
+//assignment 3
+
+create table client_master
+(client_no varchar2(6) primary key not null check(client_no like 'C%'),
+ name varchar2(20) not null,
+ city varchar2(15), 
+ pincode number(8), 
+ state varchar2(15), 
+ baldue number(10,2));
+ 
+ 
+ 
+create table product_master
+(Product_no Varchar2(6) Primary key not null check(product_no like 'P%'),
+ Description Varchar2(15) Not Null, 
+ QTY_ON_Hand Number(8) Not Null, 
+ Sell_Price Number(8,2) Not Null check(Sell_Price > 0),
+ Cost_Price Number(8,2) Not Null check(Cost_Price > 0));
+
+ 
+ 
+ create table salesman_master
+ (Salesman_no Varchar2(6) Primary key not null check(salesman_no like 'S%'),
+ Salesman_name Varchar2(20) Not Null,
+ City Varchar2(20) Not Null,
+ Pincode Number(8) Not Null,
+ State Varchar2(20) Not Null,
+ Sal_Amt Number(8,2) Not Null check(Sal_Amt > 0));
+ 
+ 
+ 
+ create table sales_order
+ (order_no Varchar2(6) Primary key not null check(order_no like 'O%'),
+ client_no varchar2(6) references client_master(client_no), 
+ order_date date, 
+ salesman_no varchar2(6) references salesman_master(salesman_no), 
+ dely_type char(1) default ('F') check(dely_type in ('P','F')), 
+ dely_date date);
+ 
+ 
+ create table sales_order_details
+ (order_no Varchar2(6) references sales_order(order_no), 
+ product_no varchar2(6) references product_master(product_no),
+ Qty_disp number(8),
+ product_rate number(10,2));
+ 
+ 
+
+
+
+insert into client_master values('C001','Ivan Bayross','Kolkata',700085,'West Bengal',15000);
+
+insert into client_master values('C002','Mamta Mazumdar','Kolkata',700091,'West Bengal',10000);
+
+insert into client_master values('C003','Chhaya Banka','Kolkata',700012,'West Bengal',5000);
+
+insert into client_master values('C004','Ashwini Joshi','Kolkata',700041,'West Bengal',1523.20);
+  
+insert into client_master values('C005','Hansel Colaco','Kolkata',700056,'West Bengal',2000);
+
+insert into client_master values('C006','Deepak Sharma','Kolkata',700082,'West Bengal',3000);
+
+
+
+insert into product_master values('P001','T-Shirts',200,350,250);
+  
+insert into product_master values('P002','T-Shirts',150,500,350);
+
+insert into product_master values('P003','Cotton Jeans',100,600,450);
+  
+insert into product_master values('P004','Jeans',100,750,500);
+  
+insert into product_master values('P005','Trousers',150,850,550);
+  
+insert into product_master values('P006','Pull Overs',80,700,450);
+  
+insert into product_master values('P007','Denim Shirts',100,350,250);
+
+insert into product_master values('P008','Lycra Tops',70,300,175);
+
+insert into product_master values('P009','Skirts',75,450,300);
+
+
+
+
+insert into salesman_master values('S0001','Aman','Mumbai',400002,'Maharashtra',3000);
+
+insert into salesman_master values('S0002','Omkar','Mumbai',400001,'Maharashtra',3000);
+
+insert into salesman_master values('S0003','Raj','Mumbai',400032,'Maharashtra',3000);
+
+insert into salesman_master values('S0004','Ashish','Mumbai',400044,'Maharashtra',3500);
+
+insert into salesman_master values('S0005','Aryan','Kolkata',700053,'West Bengal',5500);
+
+
+
+insert into sales_order values('O0001','C001','23-JAN-15','S0001','F','25-JAN-15');
+
+insert into sales_order values('O0002','C002','24-FEB-15','S0002','F','26-FEB-15');
+
+insert into sales_order values('O0003','C003','23-MAR-15','S0003','F','25-MAR-15');
+
+insert into sales_order values('O0004','C004','24-APR-15','S0004','P','26-APR-15');
+
+insert into sales_order values('O0005','C005','23-MAY-15','S0005','F','25-MAY-15');
+
+
+
+
+
+insert into sales_order_details values('O0001','P001','2002',5.2);
+
+insert into sales_order_details values('O0002','P002','2004',3.6);
+
+insert into sales_order_details values('O0003','P003','2005',2.2);
+
+
+
+
+
+1) select * from client_master where name like '__a%';
+
+2) select * from client_master where city like 'K%';
+
+3) select * from client_master where city in ('Kolkata','Mumbai');
+
+4) select * from client_master where baldue>1000;
+
+5) select * from sales_order where order_date like '%JUN%';
+				OR
+   select * from sales_order where to_char(order_date,'MON') ='JUN';
+   
+6) select * from sales_order where client_no in ('C00001','C00003');
+
+7) select * from product_master where sell_price > 500 and sell_price <=750;
+
+8) select count(*) as COUNT from sales_order;
+
+9) select max(sell_price) as max_sell_price, min(sell_price) as min_sell_price, max(cost_price) as max_cost_price, min(cost_price) as min_cost_price from product_master;
+
+10) select count(*) from client_master where city='Kolkata';
+
+11) select count(*) as COUNT from product_master where sell_price<=500;
+
+12) select order_no,to_char(order_date,'day') from sales_order;
+
+13) select to_char(order_date, 'dd-month-yy') from sales_order;
+
+14) select sysdate+20 from dual;
+
+15)select max(BalDue) as Max_bal_due from client_master;
+
+16) select max(BalDue) - min(BalDue) as Range from client_master;
+
+17) update salesman_master set sal_amt=sal_amt+1000;
+ 

@@ -1,0 +1,117 @@
+//assignmnet 4 (sailors)
+
+
+create table sailors
+(sid varchar2(6) primary key not null check(sid like '%S'),
+ sname varchar2(20) not null,
+ rating number(2),
+ age number(3));
+ 
+ 
+create table boats
+(bid varchar2(6) primary key not null check(bid like '%B'),
+ bname varchar2(20) not null,
+ color varchar2(10));
+ 
+ 
+ 
+ create table reserves
+ (sid varchar2(6) references sailors(sid),
+ bid varchar2(6) references boats(bid),
+ day date);
+
+
+ 
+ 
+ 
+insert into sailors values('1000S', 'Ramesh', 10, 55);
+
+insert into sailors values('2000S', 'Ramesh', 7, 65);
+
+insert into sailors values('3000S', 'Ashish', 5, 25);
+
+insert into sailors values('4000S', 'Kanchacheena', 10, 45);
+
+insert into sailors values('5000S', 'RaufLala', 9, 70);
+
+
+
+
+insert into boats values('5000B', 'Titanic', 'Red');
+
+insert into boats values('4000B', 'Vikraat', 'Black');
+
+insert into boats values('3000B', 'Yatchy', 'Yellow');
+
+insert into boats values('2000B', 'Rolly', 'Red');
+
+insert into boats values('1000B', 'Joker', 'Red');
+
+
+
+
+insert into reserves values('1000S','3000B','23-JAN-15');
+
+insert into reserves values('2000S','2000B','14-FEB-15');
+
+insert into reserves values('3000S','5000B','21-MAR-15');
+
+insert into reserves values('4000S','1000B','4-APR-15');
+
+insert into reserves values('5000S','1000B','1-MAY-15');
+
+
+
+
+
+
+QUERY:-
+
+1) select count(*) as COUNT from sailors;
+
+2) select count(distinct(bid)) from reserves;
+
+3) select sum(distinct(age)) as age_sum from sailors;
+
+4) select avg(age) as average_age from sailors;
+
+5) select avg(distinct(age)) as average_age from sailors;
+
+6) select max(age) as oldest, min(age) as youngest from sailors;
+
+7) select avg(age) from sailors where rating=10;
+
+8) select count(distinct(sname)) as count from sailors;
+
+9) select sname, age from sailors where age=(select max(age) from sailors);
+
+10) select sname from sailors where age > ALL (select max(age) from sailors where rating=10);
+
+11) select * from sailors order by rating age;
+
+12) select * from sailors order by rating desc;
+
+13) select * from sailors order by rating desc,age;
+
+14) select sname from sailors order by sname;
+
+15) select * from sailors order by rating desc, age desc;
+
+16) select * from sailors order by rating desc, age;
+
+17) select * from sailors order by rating ,age;
+
+18) select min(age) as youngest,rating from sailors group by rating;
+
+19) select min(age) as age,rating from sailors where age>=18 group by rating having count(*) >1;
+
+20) select b.bid,count(*) as count from boats b,reserves r where r.bid=b.bid and b.color='Red' group by b.bid;
+
+21) select avg(age) as average,rating from sailors group by rating having count(*) >1;
+
+22) create view Temp(Rating,Average) as (select S.rating, avg(S.age) from  Sailors S group by S.rating) ;
+    
+	select Temp.Rating,Temp.Average from Temp where  Temp.Average = (select min(Temp.Average) from Temp) ;
+
+    drop view Temp;
+

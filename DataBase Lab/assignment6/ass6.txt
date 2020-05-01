@@ -1,0 +1,140 @@
+// assignment-6 (join and nested queries)
+
+create table employee
+(personname varchar2(20), 
+street varchar2(20), 
+city varchar2(15));
+
+
+
+
+create table company
+(companyname varchar2(20), 
+city varchar2(15));
+
+
+
+
+create table works
+(personname varchar2(20),
+ companyname varchar2(20),
+ salary number(7));
+
+
+ 
+create table manages
+(personname varchar2(20),
+ managername varchar2(20));
+ 
+ 
+ 
+insert into employee values ('ABC','Dombivali','Mumbai');
+
+insert into employee values ('PQR','Dombivali','Mumbai');
+
+insert into employee values ('EFG','Dadri','Mumbai');
+
+insert into employee values('XYZ','Salt lake','Kolkata');
+
+insert into employee values('IJK','Tollygunge','Kolkata');
+
+insert into employee values('XYL','Tollygunge','Kolkata');
+
+
+
+
+
+
+insert into works values('ABC','Axis Bank',450000);
+
+insert into works values('PQR','Axis Bank',200000);
+
+insert into works values('EFG','Dena Bank',310000);
+
+insert into works values('XYZ','AK Bank',310000);
+
+insert into works values('IJK','SBI',320000);
+
+insert into works values('XYL','SBI',820000);
+
+
+
+
+insert into company values('Axis Bank','Delhi');
+
+insert into company values('Dena Bank','Ahemedabad');
+
+insert into company values('AK Bank','Singapore');
+
+insert into company values('SBI','Kolkata');
+
+
+
+
+insert into manages values('PQR','ABC');
+
+insert into manages values('EFG','XYL');
+
+
+
+
+
+QUERY:-
+
+a) select personname from works where companyname='Axis Bank';
+
+b) select personname,city from works NATURAL JOIN employee where companyname='Axis Bank';
+
+					OR
+   select employee.personname, city from employee, works where employee.personname=works.personname and companyname='Axis Bank';
+   
+c) select employee.personname,street, city from employee, works where employee.personname=works.personname and companyname='Axis Bank' and salary >300000;
+
+d) select employee.personname, street, employee.city from employee, works, company where employee.personname=works.personname and works.companyname=company.companyname and employee.city=company.city;
+
+e) select e.personname,e.street,e.city
+   from employee e, employee p,manages m
+   where e.personname=m.personname
+   and m.managername= p.personname
+   and p.city=e.city
+   and p.street=e.street;
+
+f) select * from works where companyname not in ('Axis Bank');
+
+g) select * from works where salary > ALL (select salary from works where companyname='Axis Bank');
+
+h) create view Tmp(companyname,city) as ( select c1.companyname,c1.city from company c1,company c2 where c1.city=c2.city and c2.companyname='Axis Bank');
+   
+   select companyname from Tmp group by companyname having count(distinct(city)) = (select count(distinct(city)) from company where companyname='Axis Bank');
+   
+   drop view Tmp;
+   
+i) select w.personname,w.salary from works w where salary > ( select avg(p.salary) from works p where p.companyname=w.companyname);
+
+j) select companyname
+   from works
+   group by companyname
+   having count(personname) >= ALL (select count(personname) from works group by companyname);
+   
+k) select companyname
+   from works
+   group by companyname
+   having sum(salary) <= ALL (select sum(salary) from works group by companyname);
+   
+l) select companyname
+   from works
+   group by companyname
+   having avg(salary) > ALL (select avg(salary) from works where companyname='Axis Bank');
+
+m) update employee set city='Kolkata' where personname='ABC';
+
+n) update works set salary=salary*1.1 where companyname='Axis Bank';
+
+o) update works set salary=salary*1.1 where personname in(select managername from manages);
+
+p) update works set salary=salary*1.03 where salary*1.1 > 300000 and  personname in(select managername from manages);
+   
+   update works set salary=salary*1.1 where personname in(select managername from manages) and salary*1.1 < 300000;
+   
+q) delete from works where companyname='Axis Bank';
+
